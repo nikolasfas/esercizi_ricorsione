@@ -22,24 +22,61 @@ class NRegine():
         # CASO TERMINALE: HO MESSO N REGINE
         if len(parziale) == N:
 
-            if self._is_soluzione(parziale):
-
-                self.n_soluzioni += 1
-                print(parziale)
+        # if self._is_soluzione(parziale):
+          self.n_soluzioni += 1
+          print(parziale)
 
         # CASO RICORSIVO: HO MESSO < N REGINE
         else:
             for riga in range(N):
                 for col in range(N):
+                    # VERIFICO SE LA nuova_regina SIA AMMISSIBILE
                     nuova_regina = [riga, col]
-                    # AGGIUNGI PEZZO DI SOLUZIONE IN parziale
-                    parziale.append(nuova_regina)
-                    self._ricorsione2(parziale, N)
-                    # FARE BACKTRACKING
-                    parziale.pop()
+
+                    if self._step_is_valid(nuova_regina, parziale):
+                        # AGGIUNGI PEZZO DI SOLUZIONE IN parziale
+                        parziale.append(nuova_regina)
+                        self._ricorsione2(parziale, N)
+                        # FARE BACKTRACKING
+                        parziale.pop()
+
+    def _step_is_valid(self, nuova_regina, parziale) -> bool:
+        for regina in parziale:
+            if not self._is_pair_admissible(nuova_regina, regina):
+                return False;
+        return True;
+
+
+
+    def _is_pair_admissible(self, regina1, regina2) -> bool:
+        # 1 VERIFICO LA RIGA, SE NON VA BENE, return False
+        if regina1[0] == regina2[0]:
+            return False;
+
+        # 2 VERIFICO LA COLONNA, SE NON VA BENE, return False
+        if regina1[1] == regina2[1]:
+            return False;
+
+        # 3 VERIFICO LA DIAGONALE 1, SE NON VA BENE, return False
+        # PER FARE LA VERIFICA DEVO CONTROLLARE CHE colonna_regina1 - riga_regina1 == colonna_regiona2 - riga_regina2
+        if regina1[0] - regina1[1] == regina2[0] - regina2[1]:
+            return False;
+
+        # 4 VERIFICO LA DIAGONALE 2, SE NON VA BENE, return False
+        # PER FARE LA VERIFICA DEVO CONTROLLARE CHE colonna_regina1 + riga_regina1 == colonna_regiona2 + riga_regina2
+        if regina1[0] + regina1[1] ==  regina2[0] + regina2[1]:
+            return False;
+
+        # 5 HO PASSATO TUTTI I CONTROLLI, return True
+        return True;
+
 
     def _is_soluzione(self, sol_possibile) -> bool:
-        pass
+        for i in range(len(sol_possibile)-1):
+            for j in range(i+1, len(sol_possibile)):
+                if not self._is_pair_admissible(sol_possibile[i], sol_possibile[j]):
+                    return False;
+        return True;
 
 
 
