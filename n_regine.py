@@ -1,3 +1,4 @@
+import copy
 from time import time
 
 
@@ -6,6 +7,7 @@ class NRegine():
     def __init__(self):
         self.n_soluzioni = None
         self.n_chiamate = None
+        self.soluzioni = None
 
     # ===========================APPROCCIO 2==============================
     # SOLUZIONE COME VETTORE DI COPPIE (RIGA, COLONNA)
@@ -13,6 +15,7 @@ class NRegine():
     def solve2(self, N):
         self.n_soluzioni = 0
         self.n_chiamate = 0
+        self.soluzioni = []
         self._ricorsione2([], N)
 
     # parziale E' UN VETTORE DI N ELEMENTI, OGNUNO RAPPRESENTATE
@@ -22,9 +25,11 @@ class NRegine():
         # CASO TERMINALE: HO MESSO N REGINE
         if len(parziale) == N:
 
-        # if self._is_soluzione(parziale):
-          self.n_soluzioni += 1
-          print(parziale)
+            if self._is_nuova_soluzione(parziale):
+
+                # if self._is_soluzione(parziale):
+                self.n_soluzioni += 1
+                self.soluzioni.append(copy.deepcopy(parziale))
 
         # CASO RICORSIVO: HO MESSO < N REGINE
         else:
@@ -39,6 +44,21 @@ class NRegine():
                         self._ricorsione2(parziale, N)
                         # FARE BACKTRACKING
                         parziale.pop()
+
+    # CONFRONTIAMO LA SOLUZIONE POTENZIALE CON TUTTE QUELLE GIA' TROVATE
+    # SE E' DIVERSA, return True, ALTRIMENTI return False
+    def _is_nuova_soluzione(self, soluzione_potenziale):
+        N = len(soluzione_potenziale)
+        for soluzione in self.soluzioni:
+            counter = 0
+            for regina in soluzione_potenziale:
+                if regina in soluzione:
+                    counter += 1
+            if counter == N:
+                return False
+        return True
+
+
 
     def _step_is_valid(self, nuova_regina, parziale) -> bool:
         for regina in parziale:
@@ -90,3 +110,4 @@ if __name__ == '__main__':
     print(f"Ho trovato {nRegine.n_soluzioni} soluzioni possibili")
     print(f"Chiamate effettuate {nRegine.n_chiamate} chiamate")
     print(f"Elapsed time = {end_time - start_time}")
+    print(nRegine.soluzioni)
